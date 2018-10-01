@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>CryptoTerra</title>
+  </head>
+  <h1>Introduce tu nombre de usuario: </h1>
+<input type="text" name="usuario" value="" id="usuario" required>
+<button type="button" name="button" onclick="chatUser();">Entrar</button>
+    <script type="text/javascript">
+      function chatUser(){
+        var usuario = document.getElementById('usuario').value;
+        location.href = window.location.href + usuario;
+      }
+    </script>
+  </body>
+</html>

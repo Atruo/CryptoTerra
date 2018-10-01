@@ -34,10 +34,10 @@
         <div class="room">
             <h1>NODE</h1>
             <div class="messages" id="nMessages"></div>
-            <form>
+
                 <input type="text" name="" id="nTxt" class="txt-send">
                 <input type="button" value="Send" id="nBtn" class="btn">
-            </form>
+
         </div>
 
     </div>
@@ -47,16 +47,24 @@
         socket.on("connect", function(){
             var nRoom = "nRoom";
             socket.emit('nRoom', nRoom);
-            var pRoom = "pRoom";
-            socket.emit("pRoom", pRoom);
         });
         // NODE
         var nBtn = document.getElementById("nBtn");
         var nTxt = document.getElementById("nTxt");
         var nMessages = document.getElementById("nMessages");
+        nTxt.addEventListener("keyup", function(event) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Number 13 is the "Enter" key on the keyboard
+          if (event.keyCode === 13) {
+            // Trigger the button element with a click
+            document.getElementById("nBtn").click();
+          }
+        });
 
         nBtn.addEventListener("click", function(){
             socket.emit("node new message", nTxt.value);
+            nTxt.value = '';
         });
         socket.on("node news", function(data){
             nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;
@@ -64,7 +72,7 @@
         socket.on("node new user", function(data){
             nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;
         });
-    
+
     </script>
 </body>
 </html>
