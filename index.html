@@ -33,6 +33,10 @@
     <div class="outer">
         <div class="room">
             <h1>NODE</h1>
+            <div>
+              <h3>Usuarios del Chat:</h3>
+              <span id="usuarios"></span>
+            </div>
             <div class="messages" id="nMessages"></div>
 
                 <input type="text" name="" id="nTxt" class="txt-send">
@@ -49,30 +53,39 @@
             socket.emit('nRoom', nRoom);
         });
         // NODE
-        var nBtn = document.getElementById("nBtn");
-        var nTxt = document.getElementById("nTxt");
-        var nMessages = document.getElementById("nMessages");
+        var nBtn = document.getElementById("nBtn");//Boton
+        var nTxt = document.getElementById("nTxt");//Texto
+        var nMessages = document.getElementById("nMessages");//Historial
+        var usuarios = document.getElementById('usuarios');//Lista usuarios
         nTxt.addEventListener("keyup", function(event) {
-          // Cancel the default action, if needed
           event.preventDefault();
-          // Number 13 is the "Enter" key on the keyboard
-          if (event.keyCode === 13) {
-            // Trigger the button element with a click
+          if (event.keyCode === 13) {//Si pulsamos enter se envia el mensaje
             document.getElementById("nBtn").click();
           }
         });
+        nBtn.addEventListener("click", function(){//Si pinchamos en el botón
+            socket.emit("node new message", nTxt.value);//Emitimos mensaje nuevo
+            nTxt.value = '';//La casilla de escribir se vuelve en blanco
+        });
+        socket.on("node news", function(data){//Si hay in mensaje nuevo...
+            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Agregamos el nuevo mensake al historial
+        });
+        socket.on("node new user", function(data){//SI hay un usuario nuevo....
+            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
+        });
+        socket.on("actualizar usuarios", function(data){//Lista de usuarios
+          var nombres = '';
+            for (var i = 0; i < data.length; i++) {
+              if (i==0) {
+                nombres = data[i];
+              }else{
+                nombres += ', '+data[i];
+              }
 
-        nBtn.addEventListener("click", function(){
-            socket.emit("node new message", nTxt.value);
-            nTxt.value = '';
+            }
+            usuarios.innerHTML = nombres;//Enviamos un texto diciendo que X usuario se ha unido
         });
-        socket.on("node news", function(data){
-            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;
-        });
-        socket.on("node new user", function(data){
-            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;
-        });
-
+        
     </script>
 </body>
 </html>
