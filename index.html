@@ -47,11 +47,15 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+    //SOCKET.IO
         var socket = io();
         socket.on("connect", function(){
             var nRoom = "nRoom";
             socket.emit('nRoom', nRoom);
         });
+    //NODE CRYPTO
+        var cosa = require('crypto').createHash('sha1').update('abc').digest('hex')
+        console.log(cosa);
         // NODE
         var nBtn = document.getElementById("nBtn");//Boton
         var nTxt = document.getElementById("nTxt");//Texto
@@ -67,10 +71,10 @@
             socket.emit("node new message", nTxt.value);//Emitimos mensaje nuevo
             nTxt.value = '';//La casilla de escribir se vuelve en blanco
         });
-        socket.on("node news", function(data){//Si hay in mensaje nuevo...
+        socket.on("node news", function(data){//Si hay un mensaje nuevo...
             nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Agregamos el nuevo mensake al historial
         });
-        socket.on("node new user", function(data){//SI hay un usuario nuevo....
+        socket.on("node new user", function(data){//Si hay un usuario nuevo....
             nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
         });
         socket.on("actualizar usuarios", function(data){//Lista de usuarios
@@ -85,7 +89,7 @@
             }
             usuarios.innerHTML = nombres;//Enviamos un texto diciendo que X usuario se ha unido
         });
-        
+
     </script>
 </body>
 </html>
