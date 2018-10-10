@@ -5,6 +5,10 @@ const server = app.listen(3000);
 const io = socketIO(server);
 const path = require("path");
 
+var CryptoJS = require("crypto-js");
+var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+console.log(ciphertext);
+
 var users = {};
 var usuarios = [];
 var cont = 0;

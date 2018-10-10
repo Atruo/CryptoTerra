@@ -46,6 +46,10 @@
 
     </div>
     <script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+
+
     <script>
     //SOCKET.IO
         var socket = io();
@@ -54,8 +58,13 @@
             socket.emit('nRoom', nRoom);
         });
     //NODE CRYPTO
-        var cosa = require('crypto').createHash('sha1').update('abc').digest('hex')
-        console.log(cosa);
+    var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+
+  // Decrypt
+  var bytes  = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
+  var originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+  console.log(ciphertext); // 'my message'
         // NODE
         var nBtn = document.getElementById("nBtn");//Boton
         var nTxt = document.getElementById("nTxt");//Texto
