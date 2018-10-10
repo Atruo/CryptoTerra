@@ -1,2 +1,3 @@
 npm install -g bower
 npm install crypto-js
+npm install hybrid-crypto-js

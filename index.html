@@ -45,8 +45,10 @@
         </div>
 
     </div>
-    <script src="/socket.io/socket.io.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js"></script>
+<script type="application/json" src="https://raw.githubusercontent.com/juhoen/hybrid-crypto-js/master/web/hybrid-crypto.min.js"></script>
 
 
 
@@ -58,6 +60,8 @@
             socket.emit('nRoom', nRoom);
         });
     //NODE CRYPTO
+
+
     var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
 
   // Decrypt
