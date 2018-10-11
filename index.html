@@ -32,7 +32,7 @@
 <body>
     <div class="outer">
         <div class="room">
-            <h1>NODE</h1>
+            <h1>CRYPTO-TERRA</h1>
             <div>
               <h3>Usuarios del Chat:</h3>
               <span id="usuarios"></span>
@@ -48,60 +48,72 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js"></script>
-<script type="application/json" src="https://raw.githubusercontent.com/juhoen/hybrid-crypto-js/master/web/hybrid-crypto.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js"></script>
+<script src="http://svn.code.sf.net/p/pidcrypt/code/trunk/javascripts/rsa.js"></script>
+
+
 
 
 
     <script>
-    //SOCKET.IO
+    var nBtn = document.getElementById("nBtn");//Boton
+    var nTxt = document.getElementById("nTxt");//Texto
+    var nMessages = document.getElementById("nMessages");//Historial
+    var usuarios = document.getElementById('usuarios');//Lista usuarios
+    var claveAES, pubKEY, privKEY;//Listado de claves
+    
         var socket = io();
         socket.on("connect", function(){
             var nRoom = "nRoom";
             socket.emit('nRoom', nRoom);
         });
-    //NODE CRYPTO
 
+      socket.on("primero", function(data){
+          //Crear clave AES y emitirla al resto
+           var salt = CryptoJS.lib.WordArray.random(128/8);
+           var key256Bits = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 256/32 });
+           claveAES = key256Bits.toString();
 
-    var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+      });
+      socket.on("clave_AES", function(){
+          //Conseguir clave AES para cifrar mensajes
+      });
 
-  // Decrypt
-  var bytes  = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
-  var originalText = bytes.toString(CryptoJS.enc.Utf8);
-
-  console.log(ciphertext); // 'my message'
-        // NODE
-        var nBtn = document.getElementById("nBtn");//Boton
-        var nTxt = document.getElementById("nTxt");//Texto
-        var nMessages = document.getElementById("nMessages");//Historial
-        var usuarios = document.getElementById('usuarios');//Lista usuarios
-        nTxt.addEventListener("keyup", function(event) {
+      nTxt.addEventListener("keyup", function(event) {//Si pulsamos enter se envia el mensaje
           event.preventDefault();
-          if (event.keyCode === 13) {//Si pulsamos enter se envia el mensaje
+          if (event.keyCode === 13) {//EL 13 es el enter
             document.getElementById("nBtn").click();
           }
-        });
-        nBtn.addEventListener("click", function(){//Si pinchamos en el botón
-            socket.emit("node new message", nTxt.value);//Emitimos mensaje nuevo
-            nTxt.value = '';//La casilla de escribir se vuelve en blanco
-        });
-        socket.on("node news", function(data){//Si hay un mensaje nuevo...
-            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Agregamos el nuevo mensake al historial
-        });
-        socket.on("node new user", function(data){//Si hay un usuario nuevo....
-            nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
-        });
-        socket.on("actualizar usuarios", function(data){//Lista de usuarios
-          var nombres = '';
-            for (var i = 0; i < data.length; i++) {
-              if (i==0) {
-                nombres = data[i];
-              }else{
-                nombres += ', '+data[i];
-              }
+      });
 
+      nBtn.addEventListener("click", function(){//Si pinchamos en el botón
+        //cifrar
+        var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, 'claveAES').toString();
+          socket.emit("node new message", mensajeCIF);//Emitimos mensaje nuevo cifrado
+          nTxt.value = '';//La casilla de escribir se vuelve en blanco
+      });
+
+      socket.on("node news", function(data){//Si hay un mensaje nuevo...
+        //descifrar
+        var des  = CryptoJS.AES.decrypt(data[1], 'claveAES');
+        var mensajeDES = des.toString(CryptoJS.enc.Utf8);
+          nMessages.innerHTML = nMessages.innerHTML + "<br>" +` <strong>${data[0]}:</strong>`+mensajeDES;//Agregamos el nuevo mensake al historial
+      });
+      socket.on("node new user", function(data){//Si hay un usuario nuevo....
+          nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
+      });
+      socket.on("actualizar usuarios", function(data){//Lista de usuarios
+        var nombres = '';
+          for (var i = 0; i < data.length; i++) {
+            if (i==0) {
+              nombres = data[i];
+            }else{
+              nombres += ', '+data[i];
             }
-            usuarios.innerHTML = nombres;//Enviamos un texto diciendo que X usuario se ha unido
-        });
+
+          }
+          usuarios.innerHTML = nombres;//Enviamos un texto diciendo que X usuario se ha unido
+      });
 
     </script>
 </body>

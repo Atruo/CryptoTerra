@@ -13,6 +13,7 @@ var users = {};
 var usuarios = [];
 var cont = 0;
 var name = '';
+
 console.log('Server funcionando...');
 console.log('Para ejecutar el link remoto hacer: ./(la barra hacia el otro lado)ngrok http 3000');
 app.get('/', function(req,res){//Primero mandamos el HTML para poner el usuario
@@ -31,7 +32,12 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     socket.on("nRoom", function(room){
         socket.join(room);
         socket.broadcast.in(room).emit("node new user", "Se acaba de unir al chat: "+ users[socket.id]);//Nuevo usuarios
+
         if (users[socket.id] != '') {
+          if (cont === 0) {//Primer Usuario
+            console.log('primero');
+            io.sockets.in("nRoom").emit('primero', '');
+          }
           usuarios[cont] = users[socket.id];
           io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
           cont++;
@@ -40,7 +46,8 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
-        io.sockets.in("nRoom").emit('node news', users[socket.id] + ": "+ data);
+        var datos = [users[socket.id],data]
+        io.sockets.in("nRoom").emit('node news', datos);
     });
 
 
