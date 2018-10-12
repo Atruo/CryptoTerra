@@ -21,8 +21,9 @@ app.get('/', function(req,res){//Primero mandamos el HTML para poner el usuario
 })
 app.get('/:name', function(req, res){//Una vez tenemos un usuario mandamos el chat
     name = req.params.name;
-    res.sendFile(path.join(__dirname, "/index.html"));
+    res.sendFile(path.join(__dirname, "/chat.html"));
 });
+app.use(express.static(path.join(__dirname +'/public')));//PARA CREAR UNA CARPETA DE ARCHIVOS PÚBLICOS PARA LAS PETICIONES
 
 
 // socket

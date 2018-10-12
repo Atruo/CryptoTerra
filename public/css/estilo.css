@@ -1,9 +1,26 @@
-body {
+#chat {
     margin: 0 auto;
-    max-width: 800px;
     padding: 0 20px;
 }
+.title{
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+#usuarios{
+  border: 2px solid #dedede;
+  background-color: #d3e6e4;
+  border-radius: 5px;
+  text-align: center;
+}
+#usuarios>li{
 
+  display: inline;
+}
+.messages{
+  margin: 0 auto;
+  padding: 0 20px;
+}
 .container {
     border: 2px solid #dedede;
     background-color: #f1f1f1;
@@ -31,7 +48,16 @@ body {
     margin-right: 20px;
     border-radius: 50%;
 }
-
+.darker>img{
+  float: right;
+}
+.darker>u{
+  float: right;
+  margin-right: 1em;
+}
+.darker>span{
+  float: right;
+}
 .container img.right {
     float: right;
     margin-left: 20px;
@@ -46,4 +72,7 @@ body {
 .time-left {
     float: left;
     color: #999;
+}
+#nBtn{
+  width: 100%;
 }
