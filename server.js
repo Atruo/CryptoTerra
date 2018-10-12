@@ -7,15 +7,15 @@ const path = require("path");
 
 var CryptoJS = require("crypto-js");
 var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
-console.log(ciphertext);
+
 
 var users = {};
 var usuarios = [];
 var cont = 0;
 var name = '';
-
-console.log('Server funcionando...');
 console.log('Para ejecutar el link remoto hacer: ./(la barra hacia el otro lado)ngrok http 3000');
+console.log('Server funcionando...');
+
 app.get('/', function(req,res){//Primero mandamos el HTML para poner el usuario
   res.sendFile(path.join(__dirname, "/index2.html"));
 })
@@ -47,7 +47,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
-        var datos = [users[socket.id],data]
+        var datos = [users[socket.id],data]        
         io.sockets.in("nRoom").emit('node news', datos);
     });
 
