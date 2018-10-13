@@ -8,6 +8,18 @@ const path = require("path");
 var CryptoJS = require("crypto-js");
 var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
 
+var forge = require('node-forge');
+var rsa = forge.pki.rsa;
+var keypair = rsa.generateKeyPair({bits: 2048, e: 0x10001});
+var txt = 'hola'
+var encrypted = keypair.publicKey.encrypt(txt);
+// decrypt 
+var decrypted = keypair.privateKey.decrypt(encrypted);
+
+
+
+
+
 
 var users = {};
 var usuarios = [];
@@ -47,7 +59,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
-        var datos = [users[socket.id],data]        
+        var datos = [users[socket.id],data]
         io.sockets.in("nRoom").emit('node news', datos);
     });
 

@@ -38,9 +38,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js"></script>
-<script src="http://svn.code.sf.net/p/pidcrypt/code/trunk/javascripts/rsa.js"></script>
+<script src="https://unpkg.com/node-forge@0.7.0/dist/forge.min.js"></script>
 
 <script>
+var rsa = forge.pki.rsa;
+var keypair = rsa.generateKeyPair({bits: 2048, e: 0x10001});
+var txt = 'hola'
+var encrypted = keypair.publicKey.encrypt(txt);
+// decrypt 
+var decrypted = keypair.privateKey.decrypt(encrypted);
+console.log(decrypted);
+
+
+
+
+
 var nBtn = document.getElementById("nBtn");//Boton
 var nTxt = document.getElementById("nTxt");//Texto
 var nMessages = document.getElementById("chat");//Historial
