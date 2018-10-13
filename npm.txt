@@ -1,3 +1,5 @@
 npm install -g bower
 npm install crypto-js
 npm install node-forge
+
+https://www.npmjs.com/package/node-forge#rsa
