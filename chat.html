@@ -43,21 +43,45 @@
 <script>
 var rsa = forge.pki.rsa;
 var keypair = rsa.generateKeyPair({bits: 2048, e: 0x10001});
-var txt = 'hola'
-var encrypted = keypair.publicKey.encrypt(txt);
-// decrypt 
-var decrypted = keypair.privateKey.decrypt(encrypted);
-console.log(decrypted);
+const priv = keypair.privateKey;
+const pub = keypair.publicKey;
+const pubPem  = forge.pki.publicKeyToPem(pub);//Texto legible
+const privPem  = forge.pki.privateKeyToPem(priv);//Texto legible
+//////////////////////////COMO CIFRAR CON RSA/////////////////////////////////////
+      //   const priv = keypair.privateKey;
+      //   const pub = keypair.publicKey;
+      // // PEM serialize: public key
+      //  const pubPem  = forge.pki.publicKeyToPem(pub);//Texto legible
+      //  console.log("Public Key PEM:", pubPem);
+      //  const pub2 = forge.pki.publicKeyFromPem(pubPem);//Convertir el texto en la clave
+      //
+      //  // PEM serialize: private key
+      //  const privPem  = forge.pki.privateKeyToPem(priv);//Texto legible
+      //  console.log("Private Key PEM:", privPem);
+      //  const priv2 = forge.pki.privateKeyFromPem(privPem);//Convertir el texto en la clave
+      //
+      //   // enc/dec with PEM Pub and Obj Priv
+      //   console.log("\n[Enc by PEM/Dec by Obj]");
+      //    const encrypted2 = pub2.encrypt("Hello World!");
+      //   console.log("encrypted(by PEM):", forge.util.encode64(encrypted2));
+      //    const decrypted2 = priv.decrypt(encrypted2);
+      //    console.log("decrypted(by Obj):", decrypted2);
 
-
-
-
-
+var key = "";//Clave AES
+var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 var nBtn = document.getElementById("nBtn");//Boton
 var nTxt = document.getElementById("nTxt");//Texto
 var nMessages = document.getElementById("chat");//Historial
 var usuarios = document.getElementById('usuarios');//Lista usuarios
 var claveAES, pubKEY, privKEY;//Listado de claves
+var primero = false; //Si es el primer usuario
+var usuario;
+if (window.location.href.includes('3000/')) {
+  usuario = window.location.href.split('3000/')[1];
+}else{
+  usuario =  window.location.href.split('io/')[1]
+}
+console.log('Usuario: '+usuario);
   var socket = io();
   socket.on("connect", function(){
       var nRoom = "nRoom";
@@ -65,26 +89,57 @@ var claveAES, pubKEY, privKEY;//Listado de claves
   });
   socket.on("primero", function(data){
       //Crear clave AES y emitirla al resto
-       var salt = CryptoJS.lib.WordArray.random(128/8);
-       var key256Bits = CryptoJS.PBKDF2("Secret Passphrase", salt, { keySize: 256/32 });
-       claveAES = key256Bits.toString();
+      console.log('primero');
+      for (var i = 0; i < 128; i++){
+        key += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+    primero = true;
+    console.log('Key_primero: '+key);
   });
+if (primero === false) {
+  socket.emit("clave_publica", [usuario,pubPem]);//Emitimos la clave publica del usuario (PEM)
+  console.log('Emito clave publica nuevo usuario='+usuario);
+}
+socket.on("emision_clavePublica", function(data){//Recivimos la clave publica
+  console.log('entramos en la recepcion de claves publicas y soy primero? = '+primero);
+    if (primero === true) {
+      var pub2 = forge.pki.publicKeyFromPem(data[1]);
+      console.log('Esta es la Public Key que recibo: '+data[1]);
+        console.log('Esta es la Public Key que interpreto: '+pub2);
+      console.log('encripto esta key: '+key);
+      var encrypted = pub2.encrypt(forge.util.encodeUtf8(key));
+
+      socket.emit("clave_AES_encriptada", [data[0],encrypted]);//Emitimos la clave AES encriptada
+      console.log('recivo la clave publica y le envio la key encriptada: '+encrypted);
+    }
+});
+socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encriptada
+    if (data[0] === usuario) {
+        console.log('recibo la lave AES cifrada: '+data[1]);
+      key = priv.decrypt(data[1]);
+      console.log('Recivo la clave AES y la descifro= '+key);
+    }
+});
+
+
+
   nBtn.addEventListener("click", function(){//Si pinchamos en el botón
     //cifrar
     if (nTxt.value !== '') {
-      var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, 'claveAES').toString();
+      var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
         socket.emit("node new message", mensajeCIF);//Emitimos mensaje nuevo cifrado
     }
 
   });
   socket.on("node news", function(data){//Si hay un mensaje nuevo...
     //descifrar
-    var des  = CryptoJS.AES.decrypt(data[1], 'claveAES');
+    var des  = CryptoJS.AES.decrypt(data[1], key);
     var mensajeDES = des.toString(CryptoJS.enc.Utf8);
     //Escribimos el mensaje
     var chat = document.getElementById('chat');
 
-    if (data[0] === window.location.href.split('3000/')[1]) {//PARA EVITAR QUE SE ESCRIBA EL PROPIA MENSAJE CAMBIAR CON URL DE NGROK!!!
+
+    if (data[0] === usuario) {//PARA EVITAR QUE SE ESCRIBA EL PROPIA MENSAJE
       chat.innerHTML += `<div class="container darker">
         <img src="/img/user.png" alt="Avatar" style="width:100%;"><u>${data[0]}</u>
         <p><strong>&gt;</strong> ${mensajeDES}</p>
@@ -104,6 +159,7 @@ var claveAES, pubKEY, privKEY;//Listado de claves
 });
   socket.on("node new user", function(data){//Si hay un usuario nuevo....
       nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
+
   });
   socket.on("actualizar usuarios", function(data){//Lista de usuarios
     var nombres = '';

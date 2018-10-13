@@ -13,7 +13,7 @@ var rsa = forge.pki.rsa;
 var keypair = rsa.generateKeyPair({bits: 2048, e: 0x10001});
 var txt = 'hola'
 var encrypted = keypair.publicKey.encrypt(txt);
-// decrypt 
+// decrypt
 var decrypted = keypair.privateKey.decrypt(encrypted);
 
 
@@ -61,6 +61,15 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
         var datos = [users[socket.id],data]
         io.sockets.in("nRoom").emit('node news', datos);
+    });
+    socket.on("clave_publica", function(data){//Recivimos la clave publica
+          io.sockets.in("nRoom").emit('emision_clavePublica', data);
+          console.log('el server emite la clave publica');
+
+    });
+    socket.on("clave_AES_encriptada", function(data){//Recivimos la clave AES encriptada
+      console.log('el server recive la clave aes encriptada');
+          io.sockets.in("nRoom").emit('clave_descifrar_AES', data);
     });
 
 
