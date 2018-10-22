@@ -30,6 +30,8 @@
   <div class="messages" id="nMessages"></div>
       <input type="text" name="" id="nTxt" class="form-control" onkeyup="enter();">
       <input type="button" value="Enviar" id="nBtn" class="btn btn-primary"  onclick="enviar();">
+      <input type="file" id="archivo">
+      <input type="button" value="Subir Archivo" id="bArchivo" class="btn btn-info">
   </div>
 </div>
 
@@ -47,25 +49,7 @@ const priv = keypair.privateKey;
 const pub = keypair.publicKey;
 const pubPem  = forge.pki.publicKeyToPem(pub);//Texto legible
 const privPem  = forge.pki.privateKeyToPem(priv);//Texto legible
-//////////////////////////COMO CIFRAR CON RSA/////////////////////////////////////
-      //   const priv = keypair.privateKey;
-      //   const pub = keypair.publicKey;
-      // // PEM serialize: public key
-      //  const pubPem  = forge.pki.publicKeyToPem(pub);//Texto legible
-      //  console.log("Public Key PEM:", pubPem);
-      //  const pub2 = forge.pki.publicKeyFromPem(pubPem);//Convertir el texto en la clave
-      //
-      //  // PEM serialize: private key
-      //  const privPem  = forge.pki.privateKeyToPem(priv);//Texto legible
-      //  console.log("Private Key PEM:", privPem);
-      //  const priv2 = forge.pki.privateKeyFromPem(privPem);//Convertir el texto en la clave
-      //
-      //   // enc/dec with PEM Pub and Obj Priv
-      //   console.log("\n[Enc by PEM/Dec by Obj]");
-      //    const encrypted2 = pub2.encrypt("Hello World!");
-      //   console.log("encrypted(by PEM):", forge.util.encode64(encrypted2));
-      //    const decrypted2 = priv.decrypt(encrypted2);
-      //    console.log("decrypted(by Obj):", decrypted2);
+
 
 var key = "";//Clave AES
 var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -129,6 +113,19 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
       var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
         socket.emit("node new message", mensajeCIF);//Emitimos mensaje nuevo cifrado
     }
+
+  });
+  bArchivo.addEventListener("click", function(){//Si pinchamos en enviar Archivo
+    var archivo = document.getElementById('archivo');
+      var chat = document.getElementById('chat');                                 //ME QUEDE POR AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      chat.innerHTML +=`
+      <img src="">;
+      `
+      //var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
+        socket.emit("send archivo", archivo);//Emitimos archivo
+  });
+
+  socket.on("emision archivo", function(data){//Recivimos el archivo
 
   });
   socket.on("node news", function(data){//Si hay un mensaje nuevo...

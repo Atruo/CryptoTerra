@@ -12,7 +12,7 @@ function time() {
 }
 
 function enter() {//Si pulsamos enter se envia el mensaje
-  
+
 }
 
 function enviar() {
@@ -27,4 +27,24 @@ function enviar() {
   //   texto.value = '';
   // }
 
+}
+var fotos;
+var cont = 0;
+function previewFile(){
+    var preview = document.querySelector('img'); //selects the query named img
+    var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+    var reader  = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+    }
+    fotos=file;
+    cont++;
+
+    if (file) {
+        reader.readAsDataURL(fotos); //reads the data as a URL
+    } else {
+        preview.src = "";
+    }
+  sessionStorage.setItem('fotos', fotos);
 }

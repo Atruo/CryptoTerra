@@ -62,15 +62,18 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
         var datos = [users[socket.id],data]
         io.sockets.in("nRoom").emit('node news', datos);
     });
-    socket.on("clave_publica", function(data){//Recivimos la clave publica
+    socket.on("clave_publica", function(data){//Recibimos la clave publica
           io.sockets.in("nRoom").emit('emision_clavePublica', data);
           console.log('el server emite la clave publica');
 
     });
-    socket.on("clave_AES_encriptada", function(data){//Recivimos la clave AES encriptada
+    socket.on("clave_AES_encriptada", function(data){//Recibimos la clave AES encriptada
       console.log('el server recive la clave aes encriptada');
           io.sockets.in("nRoom").emit('clave_descifrar_AES', data);
     });
-
+    socket.on("send archivo", function(data){//Recibimos el archivo
+      console.log('el server recibe el archivo');
+          io.sockets.in("nRoom").emit('emision archivo', data);
+    });
 
 });
