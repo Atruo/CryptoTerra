@@ -3,3 +3,6 @@ npm install crypto-js
 npm install node-forge
 
 https://www.npmjs.com/package/node-forge#rsa
+
+npm install formidable
+npm install fs

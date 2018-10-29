@@ -24,16 +24,18 @@
 <!-- Chat -->
 <div class="container" id="contenedor">
   <!-- Mensaje -->
-  <div id="chat">
-  </div>
+  <div id="chat"></div>
   <!-- Escribir/mandar-->
-  <div class="messages" id="nMessages"></div>
-      <input type="text" name="" id="nTxt" class="form-control" onkeyup="enter();">
-      <input type="button" value="Enviar" id="nBtn" class="btn btn-primary"  onclick="enviar();">
-      <input type="file" id="archivo">
-      <input type="button" value="Subir Archivo" id="bArchivo" class="btn btn-info">
+    <div class="messages" id="nMessages"></div>
+    <input type="text" name="" id="nTxt" class="form-control" onkeyup="enter();" autocomplete="off">
+    <input type="button" value="Enviar" id="nBtn" class="btn btn-primary"  onclick="enviar();">
+    <form action="/fileupload" method="post" enctype="multipart/form-data">
+      <input type="file" id="archivo" name="filetoupload">
+      <input type="submit" value="Subir Archivo" id="bArchivo" class="btn btn-info">
+    </form>
+
   </div>
-</div>
+
 
 <!-- Script-->
 <script src="/socket.io/socket.io.js"></script>
@@ -60,6 +62,7 @@ var usuarios = document.getElementById('usuarios');//Lista usuarios
 var claveAES, pubKEY, privKEY;//Listado de claves
 var primero = false; //Si es el primer usuario
 var usuario;
+var contArchivos = 0; //contador de los archivos enviados que nos servirá para el id de los mismos
 if (window.location.href.includes('3000/')) {
   usuario = window.location.href.split('3000/')[1];
 }else{
@@ -113,20 +116,38 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
       var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
         socket.emit("node new message", mensajeCIF);//Emitimos mensaje nuevo cifrado
     }
+      nTxt.value = '';
 
   });
   bArchivo.addEventListener("click", function(){//Si pinchamos en enviar Archivo
-    var archivo = document.getElementById('archivo');
-      var chat = document.getElementById('chat');                                 //ME QUEDE POR AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      chat.innerHTML +=`
-      <img src="">;
-      `
+    var archivo = document.querySelector('input[type=file]').files[0];
+      var chat = document.getElementById('chat');
+
+
       //var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
         socket.emit("send archivo", archivo);//Emitimos archivo
   });
 
-  socket.on("emision archivo", function(data){//Recivimos el archivo
+  socket.on("emision archivo", function(data){//Recibimos el archivo
+      console.log('Archivo recibido');
+      var chat = document.getElementById('chat');
+      //Desencriptar
+      chat.innerHTML+=`<img src="" height="200" alt="Image preview..." id="archivo${contArchivos}">`;
+      var id = 'archivo'+contArchivos;
+      var archivo = document.getElementById(id);
+      var reader = new FileReader();
 
+      reader.onloadend = function () {
+          archivo.src = reader.result;
+      }
+
+      if (data) {
+          reader.readAsDataURL(data); //reads the data as a URL
+      } else {
+          archivo.src = "";
+      }
+
+      contArchivos++;
   });
   socket.on("node news", function(data){//Si hay un mensaje nuevo...
     //descifrar
@@ -134,24 +155,26 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
     var mensajeDES = des.toString(CryptoJS.enc.Utf8);
     //Escribimos el mensaje
     var chat = document.getElementById('chat');
-
+    console.log(data);
 
     if (data[0] === usuario) {//PARA EVITAR QUE SE ESCRIBA EL PROPIA MENSAJE
+      var imgUrl = '/archivos/'+usuario
       chat.innerHTML += `<div class="container darker">
-        <img src="/img/user.png" alt="Avatar" style="width:100%;"><u>${data[0]}</u>
+        <img src= alt="Avatar" style="width:100%;"><u>${data[0]}</u>
         <p><strong>&gt;</strong> ${mensajeDES}</p>
         <span class="time-left" id = 'hora'></span>
       </div>`
-      nTxt.value = '';
+
     }else{
       chat.innerHTML += `<div class="container">
         <img src="/img/user.png" alt="Avatar" style="width:100%;"><u>${data[0]}</u>
         <p><strong>&gt;</strong> ${mensajeDES}</p>
         <span class="time-left" id = 'hora'></span>
       </div>`
-    nTxt.value = '';
-    }
 
+    }
+    var elem = document.getElementById('chat');
+      elem.scrollTop = elem.scrollHeight;
 
 });
   socket.on("node new user", function(data){//Si hay un usuario nuevo....

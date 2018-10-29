@@ -1,6 +1,10 @@
 #chat {
     margin: 0 auto;
     padding: 0 20px;
+
+    overflow-y: scroll;
+    height: 350px;
+
 }
 .title{
     margin: 0 auto;

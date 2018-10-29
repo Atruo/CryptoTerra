@@ -4,21 +4,8 @@ const app = express();
 const server = app.listen(3000);
 const io = socketIO(server);
 const path = require("path");
-
-var CryptoJS = require("crypto-js");
-var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
-
-var forge = require('node-forge');
-var rsa = forge.pki.rsa;
-var keypair = rsa.generateKeyPair({bits: 2048, e: 0x10001});
-var txt = 'hola'
-var encrypted = keypair.publicKey.encrypt(txt);
-// decrypt
-var decrypted = keypair.privateKey.decrypt(encrypted);
-
-
-
-
+var formidable = require('formidable');
+var fs = require('fs');
 
 
 var users = {};
@@ -35,6 +22,22 @@ app.get('/:name', function(req, res){//Una vez tenemos un usuario mandamos el ch
     name = req.params.name;
     res.sendFile(path.join(__dirname, "/chat.html"));
 });
+app.post('/fileupload', function(req,res){
+  console.log('entro');
+  var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+      console.log(fields.usuario);
+      var oldpath = files.filetoupload.path;
+      var newpath = path.join(__dirname +'/public/archivos/')+fields.usuario+'.'+files.filetoupload.name.split('.')[1];
+      fs.rename(oldpath, newpath, function (err) {
+        if (err) throw err;
+        var url = '/'+fields.usuario;
+        res.redirect(url);
+      });
+
+
+    });
+})
 app.use(express.static(path.join(__dirname +'/public')));//PARA CREAR UNA CARPETA DE ARCHIVOS PÚBLICOS PARA LAS PETICIONES
 
 
