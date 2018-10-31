@@ -158,12 +158,17 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
     console.log(data);
 
     if (data[0] === usuario) {//PARA EVITAR QUE SE ESCRIBA EL PROPIA MENSAJE
-      var imgUrl = '/archivos/'+usuario
-      chat.innerHTML += `<div class="container darker">
-        <img src= alt="Avatar" style="width:100%;"><u>${data[0]}</u>
-        <p><strong>&gt;</strong> ${mensajeDES}</p>
-        <span class="time-left" id = 'hora'></span>
-      </div>`
+      var fotos = data[2];
+      var nombreFoto;
+      for (var i = 0; i < fotos.length; i++) {
+        if (usuario === fotos[i].split('.')[0]) {
+          nombreFoto = fotos[i];
+
+        }
+      }
+
+      chat.innerHTML += '<div class="container darker"><img src="/perfil/'+nombreFoto+'"class="perfil" alt="Avatar" style="width:100%;"><u>'+data[0]+'</u> <p><strong>&gt;</strong>'+mensajeDES+'</p><span class="time-left" id = "hora"></span></div>';
+
 
     }else{
       chat.innerHTML += `<div class="container">

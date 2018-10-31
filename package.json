@@ -16,6 +16,7 @@
     "hybrid-crypto-js": "^0.1.6",
     "mongodb": "^3.1.6",
     "node-forge": "^0.7.6",
+    "node-localstorage": "^1.3.1",
     "npm": "^6.4.1",
     "socket.io": "^2.1.1"
   }

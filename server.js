@@ -6,8 +6,9 @@ const io = socketIO(server);
 const path = require("path");
 var formidable = require('formidable');
 var fs = require('fs');
-
-
+var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./public/perfil');
+  localStorage.setItem('fotos','[]');
 var users = {};
 var usuarios = [];
 var cont = 0;
@@ -28,10 +29,13 @@ app.post('/fileupload', function(req,res){
     form.parse(req, function (err, fields, files) {
       console.log(fields.usuario);
       var oldpath = files.filetoupload.path;
-      var newpath = path.join(__dirname +'/public/archivos/')+fields.usuario+'.'+files.filetoupload.name.split('.')[1];
+      var newpath = path.join(__dirname +'/public/perfil/')+fields.usuario+'.'+files.filetoupload.name.split('.')[1];
       fs.rename(oldpath, newpath, function (err) {
         if (err) throw err;
         var url = '/'+fields.usuario;
+        var fotos = JSON.parse(localStorage.getItem('fotos'));
+        fotos.push(fields.usuario+'.'+files.filetoupload.name.split('.')[1]);
+        localStorage.setItem('fotos',JSON.stringify(fotos));
         res.redirect(url);
       });
 
@@ -62,7 +66,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
-        var datos = [users[socket.id],data]
+        var datos = [users[socket.id],data,JSON.parse(localStorage.getItem('fotos'))]
         io.sockets.in("nRoom").emit('node news', datos);
     });
     socket.on("clave_publica", function(data){//Recibimos la clave publica
