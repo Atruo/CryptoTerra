@@ -2,12 +2,15 @@
   background: radial-gradient(#FFF176, #F57F17);
   min-height: 100%;
   font-family: "Roboto", sans-serif;
+
 }
 
 .imgc{
   width: 150px;
   height: 150px;
-  
+  border-radius: 50%;
+  border: solid 3px orange;
+
 }
 .title {
   text-transform: uppercase;
@@ -20,10 +23,10 @@
 }
 
 .descri{
- 
+
   color: #666;
   margin-bottom: 30px;
-  
+
 }
 
 .xd{
@@ -32,7 +35,7 @@
 	margin:0;
   display: flex;
   flex-direction: column;
-	
+
 }
 
 .image-upload > input
@@ -55,7 +58,7 @@ input[type="text"]{
 }
 
 input[type="file"]{
-  
+
   margin:auto;
 }
 
@@ -122,10 +125,21 @@ label:first-child {
   background: white;
   padding: 40px 100px;
   box-shadow: 0px 50px 30px -30px rgba(0, 0, 0, 0.3);
-  
+
   box-sizing: border-box;
   width: 50%;
   margin:auto;
-  margin-top: 9em;
+  margin-top: 1.5em;
 
+}
+
+#bArchivo{
+  background-color: orange; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }

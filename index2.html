@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>CryptoTerra</title>
     <link rel="stylesheet" type="text/css" href="/css/estiloindex2.css">
+
   </head>
   <div class="rellenar">
 
@@ -11,15 +12,16 @@
 
     <div class="image-upload">
     	<p class="descri">SELECCIONA TU FOTO DE PERFIL</p>
-      <form action="/fileupload" method="post" enctype="multipart/form-data" onsubmit="chatUser();">
+      <form action="/fileupload" method="post" enctype="multipart/form-data" onsubmit="checkUser();">
 
     	<label for="file-input">
-        	<img src="/img/iconusuario.png" alt="iconusuario" class="imgc"/>
+        	<img src="/img/iconusuario.png" id="foto_perfil" alt="iconusuario" class="imgc"/>
     	</label>
-        	<input id="file-input" name="filetoupload" type="file" style="display:none">
+        	<input id="file-input" onchange="readURL(this);" name="filetoupload" type="file" style="display:none" >
           <div class="xd">
             <p class="descri">- INTRODUCE TU NOMBRE DE USUARIO -</p>
-              <input type="text" name="usuario" value="" id="usuario" required>
+              <input type="text" name="usuario" onkeyup="check();" value="" id="usuario" required>
+              <p id="modal" style="display:none; color: red;">Nombre de Usuario no disponible</p>
           </div>
             <div class="text-center">
 
@@ -27,6 +29,58 @@
           </div>
       </form>
 
+      <script src="/socket.io/socket.io.js"></script>
+<script>
+var fotos = [];
+var socket = io();
+var existe = false;
+socket.on("connect", function(){
+    var nRoom = "nRoom2";
+    socket.emit('nRoom', nRoom);
+});
+socket.emit("pedir_fotos", "");//Pedimos las fotos
+socket.on("recibir_fotos", function(data){//Recivimos la clave AES encriptada
+    fotos = data;
+});
+
+
+  function check(){
+
+    var user = document.getElementById("usuario");//nombre usuario
+    var boton = document.getElementById('bArchivo');
+    existe = false;
+    console.log(fotos);
+    for (var i = 0; i < fotos.length; i++) {
+
+      if (fotos[i].split('.')[0] === user.value) {
+
+        existe = true;
+      }
+    }
+    console.log(existe);
+    if (existe === true) {
+      var modal = document.getElementById('modal');
+      modal.style.display = 'block';
+      boton.disabled = true;
+    }else{
+      var modal = document.getElementById('modal');
+      modal.style.display = 'none';
+      boton.disabled = false;
+    }
+  }
+  function readURL(input){
+    if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var foto = document.getElementById('foto_perfil');
+                foto.src = (e.target.result)
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+  }
+</script>
 
 	</div>
 

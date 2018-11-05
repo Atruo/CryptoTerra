@@ -51,18 +51,52 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     users[socket.id] = name;//Array de usuarios
     socket.on("nRoom", function(room){
         socket.join(room);
-        socket.broadcast.in(room).emit("node new user", "Se acaba de unir al chat: "+ users[socket.id]);//Nuevo usuarios
+
 
         if (users[socket.id] != '') {
           if (cont === 0) {//Primer Usuario
             console.log('primero');
-            io.sockets.in("nRoom").emit('primero', '');
+            var primi = JSON.parse(localStorage.getItem('fotos'));
+            io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
-          usuarios[cont] = users[socket.id];
-          io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
-          cont++;
-        }
+          var existe = false;
+          for (var i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] === name) {
+              existe = true;
+              console.log(existe);///EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+            }
+          }
+          if (existe === false) {
+            usuarios[cont] = users[socket.id];
+            io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
+            socket.broadcast.in(room).emit("node new user", "Se acaba de unir al chat: "+ users[socket.id]);//Nuevo usuarios
+            cont++;
+          }
 
+        }
+        console.log(usuarios);
+
+    });
+
+    socket.on('disconnect', function () {
+      console.log('Desconectado');
+      if (socket.id === usuarios[0]) {
+        if (usuarios.length > 1) {
+          var primi = JSON.parse(localStorage.getItem('fotos'));
+            var nuevo = [];
+            for (var i = 0; i < primi.length-1; i++) {
+              nuevo[i]= primi[i+1]
+            }
+            console.log(nuevo[0].split('.')[0]);
+            io.sockets.in("nRoom").emit('primero', nuevo[0].split('.')[0]);
+            localStorage.setItem('fotos', nuevo);
+        }
+      }
+    });
+    socket.on("pedir_fotos", function(data){//Peticion de fotos
+
+        io.sockets.in("nRoom2").emit('recibir_fotos', JSON.parse(localStorage.getItem('fotos')));
+        console.log(localStorage.getItem('fotos'));
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
