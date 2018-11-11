@@ -50,16 +50,19 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
 
     users[socket.id] = name;//Array de usuarios
     socket.on("nRoom", function(room){
+      if (room === 'nRoom') {
         socket.join(room);
 
 
         if (users[socket.id] != '') {
+          console.log(socket.id);
           if (cont === 0) {//Primer Usuario
             console.log('primero');
             var primi = JSON.parse(localStorage.getItem('fotos'));
             io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
           var existe = false;
+          console.log(usuarios);
           for (var i = 0; i < usuarios.length; i++) {
             if (usuarios[i] === name) {
               existe = true;
@@ -67,19 +70,31 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
             }
           }
           if (existe === false) {
-            usuarios[cont] = users[socket.id];
+            usuarios[cont] = [users[socket.id],socket.id];
             io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
             socket.broadcast.in(room).emit("node new user", "Se acaba de unir al chat: "+ users[socket.id]);//Nuevo usuarios
             cont++;
           }
 
         }
-        console.log(usuarios);
+
+      }
+
 
     });
-
+///////////////////////////////////////////////////////el array de usuarios ahora almacena un array con nombre y socket, muchas cosas no deberias de ir bien ahora
     socket.on('disconnect', function () {
-      console.log('Desconectado');
+      console.log('Desconectado: '+socket.id+' nombre: '+users[socket.id]);
+
+      for (var i = 0; i < usuarios.length; i++) {
+        if (usuarios[i][1] === socket.id) {
+          console.log(usuarios);
+          usuarios[i]='';
+          console.log(usuarios);
+          break;
+        }
+      }
+
       if (socket.id === usuarios[0]) {
         if (usuarios.length > 1) {
           var primi = JSON.parse(localStorage.getItem('fotos'));
@@ -118,3 +133,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
 
 });
+
+function remove(array, element) { //Removing elements from array
+  return array.filter(e => e !== element);
+}
