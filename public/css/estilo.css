@@ -1,3 +1,50 @@
+ body {
+  background: radial-gradient(#FFF176, #F57F17);
+  min-height: 100%;
+  font-family: "Roboto", sans-serif;
+
+}
+
+  html {
+  
+  font-family: "Roboto", sans-serif;
+
+}
+
+.minicabecera>h1{
+ 
+  color: #FF8F00;
+  letter-spacing: 1px;
+
+}
+
+.minicabecera
+{
+  display: flex;
+  background-color: #f1f1f1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.minicabecera>img{
+  max-width: 75px;
+  max-height: 75px;
+  margin-right: 0.5em;
+  padding-bottom: 0.2em;
+}
+
+
+
+.maxicontenedor{
+  display:flex;
+  flex-direction: row;
+  margin: 0 auto;
+  margin-top:1em;
+  width: 55%;
+  justify-content: center;
+}
+
 #chat {
     margin: 0 auto;
     padding: 0 20px;
@@ -12,14 +59,62 @@
     text-align: center;
 }
 #usuarios{
-  border: 2px solid #dedede;
-  background-color: #d3e6e4;
+
+  background-color: #f1f1f1;
   border-radius: 5px;
   text-align: center;
+  width: 20%;
+  display:flex;
+  margin-right: 0;
+  margin-right: 0.3%;
+  flex-direction: column;
+  border: solid 1px black;
 }
+
+#usuarios>p
+{
+  border-bottom: solid 2px #FF8F00;
+  text-transform: uppercase;
+  text-align: center;
+  color: #FF8F00;
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: 1px;
+
+
+}
+
+.formularioarchivo{
+  margin-top: 0.5em;
+}
+.button{
+  padding: 10px 20px;
+  border-radius: 3px;
+  background: #FF6F00;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  cursor: pointer;
+  color:white;
+}
+
+.button2{
+  padding: 10px 20px;
+  border-radius: 3px;
+  background: #FF6F00;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  cursor: pointer;
+  color:white;
+}
+
 #usuarios>li{
 
   display: inline;
+  font-size: 18px;
+  font-weight: 300;
 }
 .messages{
   margin: 0 auto;
@@ -31,6 +126,8 @@
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
+    border: solid 1px black;
+    margin-left: 0;
 
 }
 
@@ -43,6 +140,7 @@
     content: "";
     clear: both;
     display: table;
+
 }
 
 .container img {

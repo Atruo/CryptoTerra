@@ -14,10 +14,16 @@
 </head>
 <body onload="time();">
 
-<h2 class="title">CRYPTO-TERRA</h2>
+<div class="minicabecera">
+	<img src="/img/LOGO.png" alt="img">
+     <h1>CRYPTO-TERRA</h1>
+     
+</div>
 <!-- Usuarios del chat -->
+<div class="maxicontenedor">
+
 <div id="usuarios" class="container">
-  <p>Usuarios:</p>
+  <p>Usuarios</p>
     <li>Pepe</li>
     <li>Lola</li>
     <li>Paco</li>
@@ -29,13 +35,14 @@
   <!-- Escribir/mandar-->
     <div class="messages" id="nMessages"></div>
     <input type="text" name="" id="nTxt" class="form-control" onkeyup="enter();" autocomplete="off">
-    <input type="button" value="Enviar" id="nBtn" class="btn btn-primary"  onclick="enviar();">
-    <form action="/fileupload" method="post" enctype="multipart/form-data">
+    <input type="button" value="Enviar" class="button"  onclick="enviar();">
+    <form action="/fileupload" class="formularioarchivo" method="post" enctype="multipart/form-data">
       <input type="file" id="archivo" name="filetoupload">
-      <input type="submit" value="Subir Archivo" id="bArchivo" class="btn btn-info">
+      <input type="submit" value="Subir Archivo" class="button2">
     </form>
 
   </div>
+</div>
 
 
 <!-- Script-->
