@@ -55,8 +55,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
       }
       last_socket = socket.id;
 
-      console.log(users);
-      console.log(usuarios);
+
     socket.on("nRoom", function(room){
       if (room === 'nRoom') {
         socket.join(room);
@@ -64,6 +63,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
           console.log(socket.id);
           if (cont === 0) {//Primer Usuario
             console.log('primero');
+            console.log(cont);
             var primi = JSON.parse(localStorage.getItem('fotos'));
             io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
@@ -83,42 +83,39 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
       if (users[socket.id] != '') {
         if (users[socket.id] === usuarios[0]) {
           if (usuarios.length > 1) {
-            var primi = JSON.parse(localStorage.getItem('fotos'));
-              var nuevo = [];
-              for (var i = 0; i < primi.length-1; i++) {
-                nuevo[i]= primi[i+1]
+            var nuevo = [];
+            var pos;
+            for (var i = 1; i < usuarios.length; i++) {
+              if (usuarios[i]!=null) {
+                nuevo.push(usuarios[i]);
               }
+            }
 
-              io.sockets.in("nRoom").emit('primero', nuevo[0].split('.')[0]);
-              localStorage.setItem('fotos', JSON.stringify(nuevo));
-              for (var i = 0; i < primi.length; i++) {
-                usuarios[i] = primi[i].split('.')[0];
-              }
+            usuarios = nuevo;
+              console.log(usuarios);
+              io.sockets.in("nRoom").emit('primero', nuevo[0]);
+              io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
               users[socket.id] = '';
-              console.log('Emitimos primero, reajustamos el array de usuarios: '+ usuarios);
+              cont--;
 
           }
         }else {
           if (usuarios.length > 1) {
-            console.log('entro a borrar '+users[socket.id]);
+
             var nuevo = [];
             var pos;
             for (var i = 0; i < usuarios.length; i++) {
               if (usuarios[i] == users[socket.id]) {
-                console.log('Borro este: '+users[socket.id]);
+
               }else {
                 nuevo.push(usuarios[i]);
               }
             }
-            console.log('Nuevo: '+nuevo);
             usuarios = '';
-            console.log(usuarios);
             usuarios = nuevo;
-            console.log(usuarios);
             users[socket.id] = '';
             io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
-            console.log('Reajustamos el array de usuarios: '+ usuarios);
-
+            cont--;
           }
         }
       }
