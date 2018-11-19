@@ -24,7 +24,7 @@
 
 <div id="usuarios" class="container">
   <p>Usuarios</p>
-    
+
 </div>
 <!-- Chat -->
 <div class="container" id="contenedor">
@@ -192,6 +192,7 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
       nMessages.innerHTML = nMessages.innerHTML + "<br>" + data;//Enviamos un texto diciendo que X usuario se ha unido
 
   });
+
   socket.on("actualizar usuarios", function(data){//Lista de usuarios
     var nombres = '';
       for (var i = 0; i < data.length; i++) {

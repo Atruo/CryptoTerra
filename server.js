@@ -13,6 +13,7 @@ var users = {};
 var usuarios = [];
 var cont = 0;
 var name = '';
+var last_socket ='';
 console.log('Para ejecutar el link remoto hacer: ./(la barra hacia el otro lado)ngrok http 3000');
 console.log('Server funcionando...');
 
@@ -47,13 +48,18 @@ app.use(express.static(path.join(__dirname +'/public')));//PARA CREAR UNA CARPET
 
 // socket
 io.sockets.on("connection", function(socket){//Conectamos el socket
+      if (users[last_socket] != name) {
+        users[socket.id] = name;//Array de usuarios
+      }else {
+        users[socket.id] = '';
+      }
+      last_socket = socket.id;
 
-    users[socket.id] = name;//Array de usuarios
+      console.log(users);
+      console.log(usuarios);
     socket.on("nRoom", function(room){
       if (room === 'nRoom') {
         socket.join(room);
-
-
         if (users[socket.id] != '') {
           console.log(socket.id);
           if (cont === 0) {//Primer Usuario
@@ -61,52 +67,62 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
             var primi = JSON.parse(localStorage.getItem('fotos'));
             io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
-          var existe = false;
-          console.log(usuarios);
-          for (var i = 0; i < usuarios.length; i++) {
-            if (usuarios[i] === name) {
-              existe = true;
-              console.log(existe);///EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-            }
-          }
-          if (existe === false) {
-            usuarios[cont] = [users[socket.id],socket.id];
+            usuarios[cont] = users[socket.id];
             io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
             socket.broadcast.in(room).emit("node new user", "Se acaba de unir al chat: "+ users[socket.id]);//Nuevo usuarios
             cont++;
-          }
 
         }
-
       }
-
-
     });
 ///////////////////////////////////////////////////////el array de usuarios ahora almacena un array con nombre y socket, muchas cosas no deberias de ir bien ahora
     socket.on('disconnect', function () {
       console.log('Desconectado: '+socket.id+' nombre: '+users[socket.id]);
 
-      for (var i = 0; i < usuarios.length; i++) {
-        if (usuarios[i][1] === socket.id) {
-          console.log(usuarios);
-          usuarios[i]='';
-          console.log(usuarios);
-          break;
+
+      if (users[socket.id] != '') {
+        if (users[socket.id] === usuarios[0]) {
+          if (usuarios.length > 1) {
+            var primi = JSON.parse(localStorage.getItem('fotos'));
+              var nuevo = [];
+              for (var i = 0; i < primi.length-1; i++) {
+                nuevo[i]= primi[i+1]
+              }
+
+              io.sockets.in("nRoom").emit('primero', nuevo[0].split('.')[0]);
+              localStorage.setItem('fotos', JSON.stringify(nuevo));
+              for (var i = 0; i < primi.length; i++) {
+                usuarios[i] = primi[i].split('.')[0];
+              }
+              users[socket.id] = '';
+              console.log('Emitimos primero, reajustamos el array de usuarios: '+ usuarios);
+
+          }
+        }else {
+          if (usuarios.length > 1) {
+            console.log('entro a borrar '+users[socket.id]);
+            var nuevo = [];
+            var pos;
+            for (var i = 0; i < usuarios.length; i++) {
+              if (usuarios[i] == users[socket.id]) {
+                console.log('Borro este: '+users[socket.id]);
+              }else {
+                nuevo.push(usuarios[i]);
+              }
+            }
+            console.log('Nuevo: '+nuevo);
+            usuarios = '';
+            console.log(usuarios);
+            usuarios = nuevo;
+            console.log(usuarios);
+            users[socket.id] = '';
+            io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
+            console.log('Reajustamos el array de usuarios: '+ usuarios);
+
+          }
         }
       }
 
-      if (socket.id === usuarios[0]) {
-        if (usuarios.length > 1) {
-          var primi = JSON.parse(localStorage.getItem('fotos'));
-            var nuevo = [];
-            for (var i = 0; i < primi.length-1; i++) {
-              nuevo[i]= primi[i+1]
-            }
-            console.log(nuevo[0].split('.')[0]);
-            io.sockets.in("nRoom").emit('primero', nuevo[0].split('.')[0]);
-            localStorage.setItem('fotos', nuevo);
-        }
-      }
     });
     socket.on("pedir_fotos", function(data){//Peticion de fotos
 
@@ -136,4 +152,8 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
 
 function remove(array, element) { //Removing elements from array
   return array.filter(e => e !== element);
+}
+
+function reajustar(){
+
 }
