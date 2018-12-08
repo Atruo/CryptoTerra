@@ -80,13 +80,13 @@ console.log('Usuario: '+usuario);
       var nRoom = "nRoom";
       socket.emit('nRoom', nRoom);
   });
-  socket.on("primero", function(data){
+  socket.on("primero", function(data){// Si se trata del primer usuario conectado al chat
       //Crear clave AES y emitirla al resto
       console.log(data +'/'+usuario);
       if (data === usuario) {
 				key = '';
         console.log('primero');
-        for (var i = 0; i < 128; i++){
+        for (var i = 0; i < 128; i++){//generamos una clave de 128 bits de longitud
           key += possible.charAt(Math.floor(Math.random() * possible.length));
         }
       primero = true;
@@ -94,37 +94,37 @@ console.log('Usuario: '+usuario);
       }
 
   });
-if (primero === false) {
+if (primero === false) {//No somos el ANFITRIÓN
   socket.emit("clave_publica", [usuario,pubPem]);//Emitimos la clave publica del usuario (PEM)
   console.log('Emito clave publica nuevo usuario='+usuario);
 }
 socket.on("emision_clavePublica", function(data){//Recivimos la clave publica
   console.log('entramos en la recepcion de claves publicas y soy primero? = '+primero);
-    if (primero === true) {
-      var pub2 = forge.pki.publicKeyFromPem(data[1]);
+    if (primero === true) {//Somos el anfitrión
+      var pub2 = forge.pki.publicKeyFromPem(data[1]);//Pasamos del formato PEM al formato adecuado
       console.log('Esta es la Public Key que recibo: '+data[1]);
         console.log('Esta es la Public Key que interpreto: '+pub2);
       console.log('encripto esta key: '+key);
-      var encrypted = pub2.encrypt(forge.util.encodeUtf8(key));
+      var encrypted = pub2.encrypt(forge.util.encodeUtf8(key));//Encriptamos la clave AES con la clave Pública
 
       socket.emit("clave_AES_encriptada", [data[0],encrypted]);//Emitimos la clave AES encriptada
       console.log('recivo la clave publica y le envio la key encriptada: '+encrypted);
     }
 });
 socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encriptada
-    if (data[0] === usuario) {
+    if (data[0] === usuario) {//Somos el usuario al que va dirigido el mensaje
         console.log('recibo la lave AES cifrada: '+data[1]);
-      key = priv.decrypt(data[1]);
+      key = priv.decrypt(data[1]);//Desciframos el mensaje y obtenemos la clave AES
       console.log('Recivo la clave AES y la descifro= '+key);
     }
 });
 
 
 
-  nBtn.addEventListener("click", function(){//Si pinchamos en el botón
+  nBtn.addEventListener("click", function(){//Si enviamos mensaje
     //cifrar
     if (nTxt.value !== '') {
-      var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
+      var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();//Ciframos con la clave AES
         socket.emit("node new message", mensajeCIF);//Emitimos mensaje nuevo cifrado
     }
       nTxt.value = '';
@@ -162,8 +162,8 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
   });
   socket.on("node news", function(data){//Si hay un mensaje nuevo...
     //descifrar
-    var des  = CryptoJS.AES.decrypt(data[1], key);
-    var mensajeDES = des.toString(CryptoJS.enc.Utf8);
+    var des  = CryptoJS.AES.decrypt(data[1], key); //Desencriptamos el mensaje con la clave AES
+    var mensajeDES = des.toString(CryptoJS.enc.Utf8);//Convertimos el mensaje a un tipo String
     //Escribimos el mensaje
     var chat = document.getElementById('chat');
     console.log(data);
