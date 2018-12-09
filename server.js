@@ -28,17 +28,34 @@ app.post('/fileupload', function(req,res){
   console.log('entro');
   var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+
       console.log(fields.usuario);
       var oldpath = files.filetoupload.path;
-      var newpath = path.join(__dirname +'/public/perfil/')+fields.usuario+'.'+files.filetoupload.name.split('.')[1];
-      fs.rename(oldpath, newpath, function (err) {
-        if (err) throw err;
+      console.log(files.filetoupload.size);
+      if (files.filetoupload.size > 0) {
+        var newpath = path.join(__dirname +'/public/perfil/')+fields.usuario+'.'+files.filetoupload.name.split('.')[1];
+        fs.rename(oldpath, newpath, function (err) {
+          if (err) throw err;
+          var url = '/'+fields.usuario;
+          var fotos = JSON.parse(localStorage.getItem('fotos'));
+          fotos.push(fields.usuario+'.'+files.filetoupload.name.split('.')[1]);
+          localStorage.setItem('fotos',JSON.stringify(fotos));
+          res.redirect(url);
+        });
+
+      }else {
+        fs.copyFile(path.join(__dirname +'/public/perfil/user.png'), path.join(__dirname +`/public/perfil/${fields.usuario}.png`), (err) => {
+            if (err) throw err;
+            console.log('source.txt was copied to destination.txt');
+        });
         var url = '/'+fields.usuario;
         var fotos = JSON.parse(localStorage.getItem('fotos'));
-        fotos.push(fields.usuario+'.'+files.filetoupload.name.split('.')[1]);
+        fotos.push(fields.usuario+'.png');
         localStorage.setItem('fotos',JSON.stringify(fotos));
         res.redirect(url);
-      });
+
+      }
+
 
 
     });
@@ -60,10 +77,9 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
       if (room === 'nRoom') {
         socket.join(room);
         if (users[socket.id] != '') {
-          console.log(socket.id);
+
           if (cont === 0) {//Primer Usuario
-            console.log('primero');
-            console.log(cont);
+
             var primi = JSON.parse(localStorage.getItem('fotos'));
             io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
@@ -92,7 +108,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
             }
 
             usuarios = nuevo;
-              console.log(usuarios);
+
               io.sockets.in("nRoom").emit('primero', nuevo[0]);
               io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
               users[socket.id] = '';
@@ -124,7 +140,7 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     socket.on("pedir_fotos", function(data){//Peticion de fotos
 
         io.sockets.in("nRoom2").emit('recibir_fotos', JSON.parse(localStorage.getItem('fotos')));
-        console.log(localStorage.getItem('fotos'));
+
     });
 
     socket.on("node new message", function(data){//Si recibe un nuevo mensaje
@@ -133,15 +149,15 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
     });
     socket.on("clave_publica", function(data){//Recibimos la clave publica
           io.sockets.in("nRoom").emit('emision_clavePublica', data);
-          console.log('el server emite la clave publica');
+
 
     });
     socket.on("clave_AES_encriptada", function(data){//Recibimos la clave AES encriptada
-      console.log('el server recive la clave aes encriptada');
+
           io.sockets.in("nRoom").emit('clave_descifrar_AES', data);
     });
     socket.on("send archivo", function(data){//Recibimos el archivo
-      console.log('el server recibe el archivo');
+
           io.sockets.in("nRoom").emit('emision archivo', data);
     });
 

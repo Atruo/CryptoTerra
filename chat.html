@@ -24,6 +24,9 @@
 
 <div id="usuarios" class="container">
   <p>Usuarios</p>
+	<div id="lista">
+
+	</div>
 
 </div>
 <!-- Chat -->
@@ -34,10 +37,10 @@
     <div class="messages" id="nMessages"></div>
     <input type="text" name="" id="nTxt" class="form-control" onkeyup="enter();" autocomplete="off">
     <input type="button" value="Enviar" class="button"  onclick="enviar();" id="nBtn">
-    <form action="/fileupload" class="formularioarchivo" method="post" enctype="multipart/form-data">
+    <!-- <form action="/fileupload" class="formularioarchivo" method="post" enctype="multipart/form-data">
       <input type="file" id="archivo" name="filetoupload">
       <input type="submit" value="Subir Archivo" class="button2" id="bArchivo">
-    </form>
+    </form> -->
 
   </div>
 </div>
@@ -64,7 +67,7 @@ var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 var nBtn = document.getElementById("nBtn");//Boton
 var nTxt = document.getElementById("nTxt");//Texto
 var nMessages = document.getElementById("chat");//Historial
-var usuarios = document.getElementById('usuarios');//Lista usuarios
+var usuarios = document.getElementById('lista');//Lista usuarios
 var claveAES, pubKEY, privKEY;//Listado de claves
 var primero = false; //Si es el primer usuario
 var usuario;
@@ -130,14 +133,14 @@ socket.on("clave_descifrar_AES", function(data){//Recivimos la clave AES encript
       nTxt.value = '';
 
   });
-  bArchivo.addEventListener("click", function(){//Si pinchamos en enviar Archivo
-    var archivo = document.querySelector('input[type=file]').files[0];
-      var chat = document.getElementById('chat');
-
-
-      //var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
-        socket.emit("send archivo", archivo);//Emitimos archivo
-  });
+  // bArchivo.addEventListener("click", function(){//Si pinchamos en enviar Archivo
+  //   var archivo = document.querySelector('input[type=file]').files[0];
+  //     var chat = document.getElementById('chat');
+	//
+	//
+  //     //var mensajeCIF = CryptoJS.AES.encrypt(nTxt.value, key).toString();
+  //       socket.emit("send archivo", archivo);//Emitimos archivo
+  // });
 
   socket.on("emision archivo", function(data){//Recibimos el archivo
       console.log('Archivo recibido');

@@ -31,6 +31,8 @@
 
       <script src="/socket.io/socket.io.js"></script>
 <script>
+
+
 var fotos = [];
 var socket = io();
 var existe = false;
@@ -39,7 +41,7 @@ socket.on("connect", function(){
     socket.emit('nRoom', nRoom);
 });
 socket.emit("pedir_fotos", "");//Pedimos las fotos
-socket.on("recibir_fotos", function(data){//Recivimos la clave AES encriptada
+socket.on("recibir_fotos", function(data){//Recivimos las fotos
     fotos = data;
 });
 
@@ -79,6 +81,10 @@ socket.on("recibir_fotos", function(data){//Recivimos la clave AES encriptada
 
             reader.readAsDataURL(input.files[0]);
         }
+  }
+  function pintar(){
+    var circulo = document.getElementById('foto_perfil');
+    circulo.style.borderRadius = "red";
   }
 </script>
 
