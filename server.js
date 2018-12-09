@@ -73,15 +73,6 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
       last_socket = socket.id;
 
 
-<<<<<<< HEAD
-    socket.on("nRoom", function(room){
-      if (room === 'nRoom') {
-        socket.join(room);
-        if (users[socket.id] != '') {
-
-          if (cont === 0) {//Primer Usuario
-
-=======
     socket.on("nRoom", function(room){ //Nuevo usuario se conecta al chat
       if (room === 'nRoom') {// Si se conecta en el canal exacto del chat
         socket.join(room);// Dejamos que acceda al canal de comunicación
@@ -90,7 +81,6 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
           if (cont === 0) {//En caso de ser el Primer Usuario(ANFITRION)
             console.log('primero');
             console.log(cont);
->>>>>>> e6578119b458fd2dfe2f9df5720efc1c0e5175fd
             var primi = JSON.parse(localStorage.getItem('fotos'));
             io.sockets.in("nRoom").emit('primero', primi[0].split('.')[0]);
           }
@@ -119,13 +109,8 @@ io.sockets.on("connection", function(socket){//Conectamos el socket
             }
 
             usuarios = nuevo;
-<<<<<<< HEAD
-
-              io.sockets.in("nRoom").emit('primero', nuevo[0]);
-=======
               console.log(usuarios);
               io.sockets.in("nRoom").emit('primero', nuevo[0]);//emitimos al nuevo ANFITRION
->>>>>>> e6578119b458fd2dfe2f9df5720efc1c0e5175fd
               io.sockets.in("nRoom").emit('actualizar usuarios', usuarios);
               users[socket.id] = '';
               cont--;
