@@ -119,6 +119,10 @@ label:first-child {
   text-align: center;
 }
 
+.xd>input{
+  width: 300px;
+}
+
 
 
 .rellenar{
@@ -127,7 +131,8 @@ label:first-child {
   box-shadow: 0px 50px 30px -30px rgba(0, 0, 0, 0.3);
 
   box-sizing: border-box;
-  width: 50%;
+  max-width: 600px;
+  min-width: 300px;
   margin:auto;
   margin-top: 1.5em;
 
@@ -142,4 +147,14 @@ label:first-child {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+}
+
+@media screen and (max-width: 558px) {
+
+   .xd>input{
+
+    width: 150px;
+
+   }
+  
 }

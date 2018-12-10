@@ -41,7 +41,7 @@
   flex-direction: row;
   margin: 0 auto;
   margin-top:1em;
-  width: 55%;
+  width: 70%;
   justify-content: center;
 }
 
@@ -67,6 +67,8 @@
   display:flex;
   margin-right: 0;
   margin-right: 0.3%;
+  margin-left: 0;
+  margin-left: 0.3%;
   flex-direction: column;
   border: solid 1px black;
 }
@@ -74,11 +76,9 @@
 #usuarios>p
 {
   border-bottom: solid 2px #FF8F00;
-  text-transform: uppercase;
-  text-align: center;
+  
   color: #FF8F00;
-  font-weight: 500;
-  font-size: 24px;
+  font-size:auto;
   letter-spacing: 1px;
 
 
@@ -178,4 +178,29 @@
 }
 #nBtn{
   width: 100%;
+}
+
+@media screen and (max-width: 900px) {
+
+   .maxicontenedor{
+    flex-direction: column;
+
+   }
+
+   #usuarios{
+    width: 100%;
+   }
+  
+}
+
+@media screen and (max-width: 600px) {
+
+   .maxicontenedor{
+    width: 85%;
+  }
+
+  
+
+
+  
 }
